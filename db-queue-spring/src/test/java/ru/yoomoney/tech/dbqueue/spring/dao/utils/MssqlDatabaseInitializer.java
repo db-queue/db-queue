@@ -6,19 +6,17 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.testcontainers.containers.MSSQLServerContainer;
-import org.testcontainers.utility.TestcontainersConfiguration;
+import org.testcontainers.utility.DockerImageName;
 import ru.yoomoney.tech.dbqueue.config.QueueTableSchema;
 
 import java.net.URI;
 import java.util.Collections;
-import java.util.Optional;
 
 /**
  * @author Oleg Kandaurov
  * @since 10.07.2017
  */
 public class MssqlDatabaseInitializer {
-
     public static final String DEFAULT_TABLE_NAME = "queue_default";
     public static final String DEFAULT_TABLE_NAME_WO_IDENT = "queue_default_wo_ident";
     public static final String CUSTOM_TABLE_NAME = "queue_custom";
@@ -91,15 +89,10 @@ public class MssqlDatabaseInitializer {
         }
         SQLServerDataSource dataSource;
 
-        String ryukImage = Optional.ofNullable(System.getProperty("testcontainers.ryuk.container.image"))
-                .orElse("quay.io/testcontainers/ryuk:0.2.3");
-        TestcontainersConfiguration.getInstance()
-                .updateGlobalConfig("ryuk.container.image", ryukImage);
+        MSSQLServerContainer containerInstance = new MSSQLServerContainer<>(DockerImageName
+                .parse("docker.nexus.yooteam.ru/mssql/server:2019-CU1-ubuntu-16.04")
+                .asCompatibleSubstituteFor("mcr.microsoft.com/mssql/server"));
 
-        String mssqlImage = Optional.ofNullable(System.getProperty("testcontainers.mssql.container.image"))
-                .orElse("mcr.microsoft.com/mssql/server:2019-CU1-ubuntu-16.04");
-
-        MSSQLServerContainer containerInstance = new MSSQLServerContainer<>(mssqlImage);
         containerInstance.start();
         URI uri = URI.create(containerInstance.getJdbcUrl().substring(5));
         dataSource = new SQLServerDataSource();

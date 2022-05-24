@@ -6,18 +6,16 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.utility.TestcontainersConfiguration;
+import org.testcontainers.utility.DockerImageName;
 import ru.yoomoney.tech.dbqueue.config.QueueTableSchema;
 
 import java.util.Collections;
-import java.util.Optional;
 
 /**
  * @author Oleg Kandaurov
  * @since 10.07.2017
  */
 public class PostgresDatabaseInitializer {
-
     public static final String DEFAULT_TABLE_NAME = "queue_default";
     public static final String DEFAULT_TABLE_NAME_WO_INC = "queue_default_wo_inc";
     public static final String CUSTOM_TABLE_NAME = "queue_custom";
@@ -84,15 +82,11 @@ public class PostgresDatabaseInitializer {
         if (pgJdbcTemplate != null) {
             return;
         }
-
-        String ryukImage = Optional.ofNullable(System.getProperty("testcontainers.ryuk.container.image"))
-                .orElse("quay.io/testcontainers/ryuk:0.2.3");
-        TestcontainersConfiguration.getInstance()
-                .updateGlobalConfig("ryuk.container.image", ryukImage);
-
-        String postgresImage = Optional.ofNullable(System.getProperty("testcontainers.postgresql.container.image"))
-                .orElse("postgres:9.5");
-        PostgreSQLContainer<?> dbContainer = new PostgreSQLContainer<>(postgresImage);
+        
+        String postgresImage = "docker.nexus.yooteam.ru/" + PostgreSQLContainer.IMAGE + ":9.5";
+        PostgreSQLContainer<?> dbContainer = new PostgreSQLContainer<>(DockerImageName
+                .parse(postgresImage)
+                .asCompatibleSubstituteFor("postgres"));
         dbContainer.withEnv("POSTGRES_INITDB_ARGS", "--nosync");
         dbContainer.withCommand("postgres -c fsync=off -c full_page_writes=off -c synchronous_commit=off");
         dbContainer.start();

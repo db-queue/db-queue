@@ -6,16 +6,13 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.utility.TestcontainersConfiguration;
-
-import java.util.Optional;
+import org.testcontainers.utility.DockerImageName;
 
 /**
  * @author Oleg Kandaurov
  * @since 11.06.2021
  */
 public class DefaultDatabaseInitializer {
-
     private static JdbcTemplate pgJdbcTemplate;
     private static TransactionTemplate pgTransactionTemplate;
 
@@ -24,14 +21,11 @@ public class DefaultDatabaseInitializer {
             return;
         }
 
-        String ryukImage = Optional.ofNullable(System.getProperty("testcontainers.ryuk.container.image"))
-                .orElse("quay.io/testcontainers/ryuk:0.2.3");
-        TestcontainersConfiguration.getInstance()
-                .updateGlobalConfig("ryuk.container.image", ryukImage);
+        String postgresImage = "docker.nexus.yooteam.ru/" + PostgreSQLContainer.IMAGE + ":9.5";
+        PostgreSQLContainer<?> dbContainer = new PostgreSQLContainer<>(DockerImageName
+                .parse(postgresImage)
+                .asCompatibleSubstituteFor("postgres"));
 
-        String postgresImage = Optional.ofNullable(System.getProperty("testcontainers.postgresql.container.image"))
-                .orElse("postgres:9.5");
-        PostgreSQLContainer<?> dbContainer = new PostgreSQLContainer<>(postgresImage);
         dbContainer.withEnv("POSTGRES_INITDB_ARGS", "--nosync");
         dbContainer.withCommand("postgres -c fsync=off -c full_page_writes=off -c synchronous_commit=off");
         dbContainer.start();

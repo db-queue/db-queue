@@ -7,7 +7,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.testcontainers.containers.OracleContainer;
-import org.testcontainers.utility.TestcontainersConfiguration;
+import org.testcontainers.utility.DockerImageName;
 import ru.yoomoney.tech.dbqueue.config.QueueTableSchema;
 
 import java.sql.Connection;
@@ -15,7 +15,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Optional;
 import java.util.TimeZone;
 
 /**
@@ -23,8 +22,6 @@ import java.util.TimeZone;
  * @since 15.05.2020
  */
 public class OracleDatabaseInitializer {
-
-
     static {
         // Oracle image has old timezone files so we make test independent of timezone
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
@@ -77,15 +74,12 @@ public class OracleDatabaseInitializer {
             return;
         }
 
-        String ryukImage = Optional.ofNullable(System.getProperty("testcontainers.ryuk.container.image"))
-                .orElse("quay.io/testcontainers/ryuk:0.2.3");
-        TestcontainersConfiguration.getInstance()
-                .updateGlobalConfig("ryuk.container.image", ryukImage);
+        String oracleImage = "docker.nexus.yooteam.ru/wnameless/oracle-xe-11g-r2";
 
-        String oracleImage = Optional.ofNullable(System.getProperty("testcontainers.oracle.container.image"))
-                .orElse("wnameless/oracle-xe-11g-r2");
+        OracleContainer dbContainer = new OracleContainer(DockerImageName
+                .parse(oracleImage)
+                .asCompatibleSubstituteFor("oracle"));
 
-        OracleContainer dbContainer = new OracleContainer(oracleImage);
         dbContainer.start();
         addUserAndSchema(dbContainer, "oracle_test");
         OracleDataSource dataSource = getDataSource(dbContainer, "oracle_test");

@@ -1,12 +1,11 @@
-import ru.yoomoney.gradle.plugins.backend.build.JavaExtension
-import ru.yoomoney.gradle.plugins.javapublishing.JavaArtifactPublishExtension
-
 buildscript {
     apply from: 'project.gradle', to: buildscript
 }
 
-apply plugin: 'ru.yoomoney.gradle.plugins.library-project-plugin'
-artifactId = 'db-queue'
+apply plugin: 'yamoney-library-project-plugin'
+
+groupIdSuffix = "common"
+artifactID = 'db-queue'
 
 dependencies {
 
@@ -15,35 +14,11 @@ dependencies {
 
 }
 
-def rootJavaExtension = project.extensions.getByType(JavaExtension.class)
-def rootJavaArtifactPublishExtension = project.extensions.getByType(JavaArtifactPublishExtension.class)
-
 subprojects {
-    apply plugin: 'ru.yoomoney.gradle.plugins.java-plugin'
+    apply plugin: 'yoomoney-module-project-plugin'
 
-    javaModule {
-        repositories = rootJavaExtension.repositories
-        snapshotsRepositories = rootJavaExtension.snapshotsRepositories
+    moduleProject {
+        publishArtifactEnabled = true
     }
-
-    rootProject.tasks.getByName('build').dependsOn(tasks.getByName('build'))
-
-    apply plugin: 'ru.yoomoney.gradle.plugins.java-artifact-publish-plugin'
-
-    javaArtifactPublishSettings {
-        artifactId = "${project.name}"
-        groupId = 'ru.yoomoney.tech'
-
-        nexusUser = rootJavaArtifactPublishExtension.nexusUser
-        nexusPassword = rootJavaArtifactPublishExtension.nexusPassword
-        snapshotRepository = rootJavaArtifactPublishExtension.snapshotRepository
-        releaseRepository = rootJavaArtifactPublishExtension.releaseRepository
-        signing = rootJavaArtifactPublishExtension.signing
-        staging = rootJavaArtifactPublishExtension.staging
-        publicationAdditionalInfo = rootJavaArtifactPublishExtension.publicationAdditionalInfo
-    }
-
-    rootProject.tasks.getByName('publish').dependsOn(tasks.getByName('publish'))
 }
-
 
