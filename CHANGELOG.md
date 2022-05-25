@@ -1,7 +1,7 @@
-### NEXT_VERSION_TYPE=MINOR
-### NEXT_VERSION_DESCRIPTION_BEGIN
+## [15.2.0](https://bitbucket.yooteam.ru/projects/BACKEND-LIBRARIES/repos/db-queue/pull-requests/1) (25-05-2022)
+
 * The project was moved to bitbucket
-### NEXT_VERSION_DESCRIPTION_END
+
 ## [15.1.0]() (17-03-2022)
 
 * Upgrade dependency versions:
