@@ -1,4 +1,4 @@
-System.setProperty("platformLibraryProjectVersion", "6.+")
+System.setProperty("platformLibraryProjectVersion", "7.+")
 
 repositories {
     maven { url 'https://nexus.yooteam.ru/repository/maven-backend-build/' }

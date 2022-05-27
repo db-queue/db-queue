@@ -9,7 +9,7 @@ artifactID = 'db-queue'
 
 dependencies {
 
-    compile project(':db-queue-core'),
+    api project(':db-queue-core'),
             project(':db-queue-spring')
 
 }
