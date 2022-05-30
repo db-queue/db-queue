@@ -5,7 +5,7 @@ buildscript {
 dependencies {
 
 
-    testCompile project(':db-queue-core'),
+    testApi project(':db-queue-core'),
             project(':db-queue-spring'),
             project(':db-queue-brave'),
 
