@@ -1,7 +1,8 @@
-System.setProperty("platformLibraryProjectVersion", "7.+")
+System.setProperty("platformLibraryProjectVersion", "7.11.2-feature-BACKEND-5569-SNAPSHOT")
 
 repositories {
     maven { url 'https://nexus.yooteam.ru/repository/maven-backend-build/' }
+    maven { url 'https://nexus.yooteam.ru/repository/snapshots/' }
 
     dependencies {
         classpath 'ru.yandex.money.gradle.plugins:yamoney-library-project-plugin:' +
